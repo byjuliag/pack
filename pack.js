@@ -21,7 +21,7 @@ let inputState = {
 function preload() {
   let numFrames = 30; // Total no. of frames
   for (let i = 0; i < numFrames; i++) { //iterate over 0 to 29
-    let filename = 'Images/sprites/' + i + '.png'; //i(loop index) is used
+    let filename = 'sprites/' + i + '.png'; //i(loop index) is used
     print(`Fetched: ${filename}`);     //to determine the file name
     let frame = loadImage(filename); //loads image with corresponding
     animationState.frames.push(frame);            //filename and is pushed into a 
