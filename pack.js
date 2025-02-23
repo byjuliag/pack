@@ -1,17 +1,17 @@
 
-let main = {
+let main = { //variables related to the main state
   selected: null,
   choice: null,
   graphLine: []
 
 }
-let animationState = {
-  frames: [],
+let animationState = { //variables related to the
+  frames: [],          //animation
   whichFrame: 0,
   stopped: true
 }
-let inputState = {
-  mass: 50,
+let inputState = {     //variables related to the
+  mass: 50,            //input
   myInput: null,
   time: 20,
   countOver: false
@@ -230,10 +230,10 @@ function draw() {
   
   //properties array
   chemicals = [
-   [kno3, 34.9, 101.10, -685.0, +34.9 ], 
-   [licl, -37.1, 42.34, -859, -792 ], 
-   [kcl, 17.2, 74.55, 719, -684 ],
-   [naoh, -44.51, 40, -887, -932]
+   [kno3, 23.8, 101.10, 685.0, -708.8 ], 
+   [licl, -37.1, 42.34, 864, -901 ], 
+   [kcl, 17.2, 74.55, 718, -701 ],
+   [naoh, -44.51, 40, 887, -932]
    
   ]
   let Hsoln
@@ -259,7 +259,8 @@ function draw() {
   graphHandling(Hsoln, lattice, hydration)  
   //infosheet
   infosheet(Hsoln, mr)         
-   
+  
+  // console.log(`Mass:${inputState.mass}, Hsoln:${Hsoln}, Lattice:${lattice}, Hydration: ${hydration}`)
 }
 
 function finalTemp(Hsoln, mr){
@@ -291,9 +292,9 @@ function startAnimation(button, chemical, cation, anion){
 }
 
 function countdown(temp){
-    if (frameCount % 30 == 0 && inputState.time > temp && !countOver ) { 
+    if (frameCount % 10 == 0 && inputState.time > temp && !countOver ) { 
       inputState.time --;    //decrease time if time is greater than final temp. calculated
-    } else if(frameCount % 30 == 0 && inputState.time < temp && !countOver ){
+    } else if(frameCount % 10 == 0 && inputState.time < temp && !countOver ){
       inputState.time ++ ;  //increase time if time is smaller than final temp.calculated
     }
   //stop counting down when the time matches the target temperature
@@ -499,32 +500,64 @@ released`, 290, 210)
   graph2(hsoln, chemical, cation, anion, lattice, hydration){
     stroke(0)
     textSize(10)
-    this.startY = hsoln > 0 ?  230 : 200
+    const latticeMax = 890
+    const latticeMin = 650
+    //draws left line based on lattice enthalpy
+    this.startY = map(lattice, latticeMax, latticeMin, 140, 270)
     line(90, this.startY, 175, this.startY)
     line(175, this.startY, 175, 120)
-    line(165, 120, 260, 120)
-    triangle(170, 135, 175, 130, 180, 135)
+    triangle(170, 135, 175, 130, 180, 135) //arrow
     
+    //middle line
+    line(165, 120, 260, 120)
     noStroke()
     textFont('Oswald', 12)
+    //lattice enthalpy equation
     text(`${chemical}(s) + H₂O(l)`, 88, this.startY - 5 )
     text(`${cation}(g) + ${anion}(g)`, 175, 115)
-    
     stroke(0)
-    this.startY = map(hsoln, 60, -60, 100, 270);
-    line(250, 120, 250, this.startY)
-    line( 250, this.startY, 330, this.startY)
-    triangle(245, this.startY - 15, 250, this.startY - 10, 255, this.startY -15)
     
+   
+    //draws rightmost line
+    const hydrationMax = -600
+    const hydrationMin = -950
+    //draws right line based on hydration enthalpy
+    let endY = map(hydration, hydrationMax, hydrationMin, 100, 270 ) 
+    line(250, 120, 250, endY)
+    line( 250, endY, 330, endY)
+    //arrow
+    triangle(245, endY - 15, 250, endY - 10, 255, endY -15)
     
+    //enthalpy of hydration equation
     noStroke()
-    text(`${cation}(aq) + ${anion}(aq)`, 255, this.startY - 5 )
+    text(`${cation}(aq) + ${anion}(aq)`, 255, endY - 5 )
+    //text for lattice and hydration enthalpy
     text(`Lattice 
 Enthalpy
-${lattice}`, 90, 150)
+${lattice}`, 90, 180)
     text(`Hydration 
 Enthalpy
 ${hydration}`, 280, 180)
+    
+    //hsoln line
+    stroke(0)
+    this.startX = hsoln > 0 ? 250 : 175
+    line(this.startX, this.startY, this.startX, endY)
+    //draw direction of arrow based on value of hsoln
+    if(hsoln > 0){
+      //arrow pointing up
+      triangle(this.startX - 5 , endY +5 , this.startX, endY, this.startX + 5, endY +5)
+      line(165, this.startY,260, this.startY)
+    } else{
+      //pointing down
+      triangle(this.startX - 5 , endY - 5 , this.startX, endY, this.startX + 5, endY - 5 )
+      line(this.startX - 10, endY, 250, endY)
+    }
+    noStroke()
+    //display text for hsoln
+    text(`ΔHₛₒₗₙ: 
+${hsoln} kj/mol 
+`, 180, 210)
   }
 }
 
